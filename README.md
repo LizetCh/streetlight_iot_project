@@ -45,7 +45,6 @@ uv run <script>.py
 
 ## Base de datos
 
-Las migraciones **ya están aplicadas** en el proyecto de Supabase `streetlight`. No las vuelvas a correr: fallan con *"relation already exists"*.
 
 | Tabla | Qué guarda |
 |---|---|
