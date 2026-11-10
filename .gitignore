@@ -1,5 +1,35 @@
+# ---------- Llaves y secretos (lo más importante) ----------
 .env
-.vscode/
-.DS_Store
+.env.*
+!.env.example
+dashboard/.env.local
+firmware/secrets.h
+firmware/**/secrets.h
+
+# ---------- Python / uv ----------
 .venv/
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# ---------- Dashboard (Node / Vite) ----------
+node_modules/
+dashboard/dist/
+dashboard/.vite/
+*.log
+npm-debug.log*
+
+# ---------- Supabase CLI ----------
+supabase/.temp/
+supabase/.branches/
+
+# ---------- Arduino / ESP32 ----------
+firmware/build/
+*.bin
+*.elf
+
+# ---------- Sistema y editores ----------
+.DS_Store
+.vscode/
+.idea/
