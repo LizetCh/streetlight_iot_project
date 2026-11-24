@@ -3,26 +3,21 @@ import { fmtReportDate, fmtTime } from '../lib/format'
 import type { AiReport } from '../lib/types'
 import { IconDoc, IconRefresh } from './Icons'
 
+// El reporte lo genera ai_summary.py en GitHub Actions (cada noche, o a mano con "Run workflow").
+// El botón abre esa página; el reporte nuevo aparece aquí solo, por Realtime.
+const WORKFLOW_URL = 'https://github.com/LizetCh/streetlight_iot_project/actions/workflows/daily-ai-report.yml'
+
 type Props = {
   reports: AiReport[]
-  generating: boolean
-  onGenerate: () => Promise<string | null>
 }
 
-export function AiReportColumn({ reports, generating, onGenerate }: Props) {
+export function AiReportColumn({ reports }: Props) {
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
   const report = reports.find((r) => r.id === selectedId) ?? reports[0] ?? null
   const history = reports.filter((r) => r.id !== report?.id)
-
-  async function generate() {
-    setMessage(null)
-    const err = await onGenerate()
-    if (err) setMessage(err)
-    else setSelectedId(null)
-  }
 
   async function copy() {
     if (!report) return
@@ -56,10 +51,12 @@ export function AiReportColumn({ reports, generating, onGenerate }: Props) {
       </div>
 
       <div className="stack-8">
-        <button type="button" className="btn btn-primary btn-block" onClick={generate} disabled={generating}>
-          <IconRefresh /> {generating ? 'Generando…' : 'Generar reporte de hoy'}
-        </button>
-        <span className="muted small">Analiza las lecturas del día. Una sola llamada a la IA por reporte; también corre solo a las 23:59.</span>
+        <a className="btn btn-primary btn-block" href={WORKFLOW_URL} target="_blank" rel="noreferrer">
+          <IconRefresh /> Generar reporte ahora
+        </a>
+        <span className="muted small">
+          Se genera solo cada noche. Para uno ahora: en GitHub, “Run workflow”. Aparece aquí en cuanto termina (≈1 min).
+        </span>
         {message && (
           <p className="form-error" role="alert">
             {message}
