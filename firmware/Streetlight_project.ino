@@ -6,6 +6,7 @@
 #define LDR_1 34 // LDR 1 connected to pin 3
 #define LDR_2 35 // LDR 2 connected to pin 4
 #define LED_1 25
+#define LED_2 26
 #define THRESH 1000
 #define MAX_DIFF 50
 
@@ -23,6 +24,7 @@ HttpClient http_client = HttpClient(secure_presentation_layer, hostname, port);
 void setup() {
   Serial.begin(9600);
   pinMode(LED_1, OUTPUT);
+  pinMode(LED_2, OUTPUT);
   connectToWiFi();
 }
 
@@ -38,14 +40,20 @@ void loop() {
   String json = generateJSONReport(ldr1, ldr2);
   pushToSupabase(json);
 
-  bool on = lightState(ldr1, ldr2);
-
-  Serial.println(on);
+  bool on = lightState(1, ldr1, ldr2);
 
   if(on){
     digitalWrite(LED_1, HIGH);
   } else {
     digitalWrite(LED_1, LOW);
+  }
+
+  on = lightState(2, ldr1, ldr2);
+
+  if(on){
+    digitalWrite(LED_2, HIGH);
+  } else {
+    digitalWrite(LED_2, LOW);
   }
 
   delay(3000);
@@ -74,7 +82,7 @@ uint16_t readSensor(uint8_t pin){
   return value;
 }
 
-bool lightState(int la, int lb){
+bool lightState(int led, int la, int lb){
   int diff = abs(la - lb);
 
   if(diff > MAX_DIFF){
@@ -93,8 +101,9 @@ bool lightState(int la, int lb){
     return false;
   }
 
-  int avg = (la + lb) / 2;
-  if(avg < THRESH){
+  if(led == 1 && la < THRESH){
+    return true;
+  } else if(led == 2 && lb < THRESH){
     return true;
   }
 
@@ -120,8 +129,8 @@ void pushToSupabase(String json){
 
   http_client.sendHeader("Content-Type", "application/json");
   http_client.sendHeader("Content-Length", json.length());
-  http_client.sendHeader("apikey", "sb_secret_gAqlPGesYzC1V27BRZ-EHQ_fSliBXYn");
-  http_client.sendHeader("Authorization", "Bearer sb_secret_gAqlPGesYzC1V27BRZ-EHQ_fSliBXYn");
+  http_client.sendHeader("apikey", "sb_secret_Kvwzi9QqrC3exbGS7I6vWw_ade3rQm5");
+  http_client.sendHeader("Authorization", "Bearer sb_secret_Kvwzi9QqrC3exbGS7I6vWw_ade3rQm5");
 
   http_client.beginBody();
   http_client.print(json);
