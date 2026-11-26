@@ -7,10 +7,7 @@
 #define LDR_2 35 // LDR 2 connected to pin 4
 #define LED_1 25
 #define THRESH 1000
-void setup() {
-  Serial.begin(9600);
-  connectToWiFi();
-}
+#define MAX_DIFF 50
 
 const char* net = "UAM";
 const char* pwd = "";
@@ -22,6 +19,12 @@ int port = 443;
 WiFiClient wifi_transport_layer;
 SSLClient secure_presentation_layer(&wifi_transport_layer);
 HttpClient http_client = HttpClient(secure_presentation_layer, hostname, port);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LED_1, OUTPUT);
+  connectToWiFi();
+}
 
 void loop() {
   int ldr1 = readSensor(LDR_1);
@@ -74,7 +77,7 @@ uint16_t readSensor(uint8_t pin){
 bool lightState(int la, int lb){
   int diff = abs(la - lb);
 
-  if(diff > 30){
+  if(diff > MAX_DIFF){
     
     int max = 0;
     if(la > lb) {
