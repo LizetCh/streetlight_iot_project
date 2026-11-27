@@ -129,8 +129,8 @@ void pushToSupabase(String json){
 
   http_client.sendHeader("Content-Type", "application/json");
   http_client.sendHeader("Content-Length", json.length());
-  http_client.sendHeader("apikey", "sb_secret_Kvwzi9QqrC3exbGS7I6vWw_ade3rQm5");
-  http_client.sendHeader("Authorization", "Bearer sb_secret_Kvwzi9QqrC3exbGS7I6vWw_ade3rQm5");
+  http_client.sendHeader("apikey", "sb_secret_ZDRv7qX2D2zA2KOSqB0hxA_mxU63LQL");
+  http_client.sendHeader("Authorization", "Bearer sb_secret_ZDRv7qX2D2zA2KOSqB0hxA_mxU63LQL");
 
   http_client.beginBody();
   http_client.print(json);
