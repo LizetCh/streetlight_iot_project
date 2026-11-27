@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { AiReport } from '../lib/types'
 
-// Reportes diarios de IA. Los escribe ai_summary.py desde GitHub Actions.
+// Reportes diarios de IA. Los escribe ai_summary.py (GitHub Actions, 23:59) o la
+// Edge Function "daily-report" (botón "Generar reporte de hoy").
 export function useReports() {
   const [reports, setReports] = useState<AiReport[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [generating, setGenerating] = useState(false)
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -31,5 +33,20 @@ export function useReports() {
     }
   }, [load])
 
-  return { reports, error }
+  const generate = useCallback(async (): Promise<string | null> => {
+    setGenerating(true)
+    try {
+      const { error } = await supabase.functions.invoke('daily-report', { body: {} })
+      if (error) {
+        console.error('daily-report failed:', error.message)
+        return 'No se pudo generar el reporte. Intenta de nuevo en un momento.'
+      }
+      await load()
+      return null
+    } finally {
+      setGenerating(false)
+    }
+  }, [load])
+
+  return { reports, error, generating, generate }
 }

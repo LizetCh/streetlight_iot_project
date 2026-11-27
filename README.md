@@ -113,8 +113,20 @@ Las fases 2, 3 y 4 se pueden hacer **en paralelo**.
 - [ ] Deploy en Vercel
 
 ### Fase 4 — Reporte IA (`supabase/functions/`)
-- [ ] Edge Function `daily-report`
+- [x] Edge Function `daily-report` (mismo análisis que `ai_summary.py`; solo usuarios con sesión)
 - [ ] Secreto `GEMINI_API_KEY` en Supabase
+
+Desplegar la función (una vez, y cada vez que cambie):
+
+```bash
+npx supabase@3.4.0 login
+npx supabase@3.4.0 secrets set GEMINI_API_KEY=... --project-ref <project-ref>
+npx supabase@3.4.0 secrets set ALLOWED_ORIGINS=http://localhost:5173 --project-ref <project-ref>
+npx supabase@3.4.0 functions deploy daily-report --no-verify-jwt --project-ref <project-ref>
+```
+
+`--no-verify-jwt` es intencional: la función valida el token del usuario por su cuenta.
+`ALLOWED_ORIGINS` lleva los dominios del dashboard separados por coma.
 - [ ] Resumen del día guardado en `ai_reports`
 - [ ] Programar a las 23:59 de Mérida (05:59 UTC) con `pg_cron`
 - [ ] Botón "Generar reporte de hoy" en el dashboard

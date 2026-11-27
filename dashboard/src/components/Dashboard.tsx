@@ -28,7 +28,7 @@ export function Dashboard({ session }: { session: Session }) {
   const { settings, save: saveSettings } = useSettings()
   const { alerts, open, resolved, error: alertsError, resolve } = useAlerts()
   const series = useSeries(range, latest?.id)
-  const { reports } = useReports()
+  const { reports, generating, generate } = useReports()
 
   const offline = !!latest && now - new Date(latest.created_at).getTime() > OFFLINE_AFTER_MS
   const a = latest ? Number(latest.pole_a_pct) : null
@@ -135,7 +135,7 @@ export function Dashboard({ session }: { session: Session }) {
         </div>
       </main>
 
-      <AiReportColumn reports={reports} />
+      <AiReportColumn reports={reports} generating={generating} onGenerate={generate} />
     </div>
   )
 }
